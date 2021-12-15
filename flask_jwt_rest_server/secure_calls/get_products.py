@@ -7,7 +7,7 @@ import json
 from tools.logging import logger
 
 def handle_request():
-    logger.debug("Get Books Handle Request")
+    logger.debug("Get Products Handle Request")
 
     cursor = g.db.cursor()
 
@@ -15,36 +15,36 @@ def handle_request():
         user_id = g.jwt_data['user_id']
 
         #select * from books;
-        cursor.execute("select * from books;", user_id)
-        print("Books retrieved")
+        cursor.execute("select * from products;", user_id)
+        print("Products Retrieved")
         
     except:
-         print("books unable to be found")
-         return json_response(data={"message": "books unable to be found."}, status=500)
+         print("Products unable to be found")
+         return json_response(data={"message": "Products unable to be found."}, status=500)
 
      
-    message = "{\"books\":["
-    bookCounter = 0
+    message = "{\"products\":["
+    productCounter = 0
                  
     while True:
         db_row = cursor.fetchone()
                                  
 
         if db_row is None:
-            print("No more books to add.")
+            print("No more products to add.")
             break;
         else:
-            print("Adding Book...")
+            print("Adding Product...")
                                                                                  
-            if bookCounter > 0: message += ","
+            if productCounter > 0: message += ","
                                                                                  
 
-            bookCounter += 1
+            productCounter += 1
                                                                                                  
-
-            message += "{\"author\": \"%s\", \"title\": \"%s\", \"price\": %s, \"book_id\": %s}" % (db_row[1], db_row[2], str(db_row[3]), str(db_row[0]))
-            print("Book added.")
+            #look at this in case of error, specifically product id
+            message += "{\"company\": \"%s\", \"product\": \"%s\", \"price\": %s, \"product_id\": %s}" % (db_row[1], db_row[2], str(db_row[3]), str(db_row[0]))
+            print("Product added.")
                                                                                                                                              
     message += "]}"
-    print("The books were created.")
+    print("The products were created.")
     return json_response(data=json.loads(message))

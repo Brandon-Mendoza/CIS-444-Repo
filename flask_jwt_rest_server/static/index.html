@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+   <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">-->
     <script
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
     </script>
@@ -91,13 +91,13 @@
       <table>
 	<thead>
 	  <tr>
-	    <th>Product ID</th>
+	    <th>Company</th>
 	    <th>Product</th>
 	    <th>Price</th>
 	    <th></th>
 	  </tr>
 	</thead>
-	<tbody id="books">
+	<tbody id="christmasstore">
 	</tbody>
       </table>
     </div>
@@ -134,7 +134,7 @@
 
 	  if(response.status == 200) {
 	      token = await response.data;
-	      getBooks();
+	      getProducts();
 			    
 
 	      $("#login").hide();
@@ -153,7 +153,7 @@
 
 	  if(response.status == 200) {
 	      token = await response.data;
-	      getBooks();
+	      getProducts();
 
 	      $("#createAccount").hide();
 	      $("#storeList").show();
@@ -161,24 +161,24 @@
       }
 
 
-      async function getBooks() {
-	  const response = await $.post("/secure_api/get_books",
+      async function getProducts() {
+	  const response = await $.post("/secure_api/get_products",
 				  {
 			              "jwt": token.jwt
 				  }, "json");
 
-	  console.log(response.data.books.length);
+	  console.log(response.data.products.length);
 	  
-	  for(i = 0; i < response.data.books.length; i++) {
-	      authorTableColumn = `<td>${response.data.books[i].author}</td>`;
-	      titleTableColumn = `<td>${response.data.books[i].title}</td>`;
-	      priceTableColumn = `<td>$${response.data.books[i].price}</td>`;
-	      buttonTableColumn = `<td><button id=\"${response.data.books[i].book_id}\" onclick=\"purchaseBook(this.id);\">Purchase Item</button></td>`; 
+	  for(i = 0; i < response.data.products.length; i++) {
+	      companyTableColumn = `<td>${response.data.products[i].company}</td>`;
+	      productTableColumn = `<td>${response.data.products[i].product}</td>`;
+	      priceTableColumn = `<td>$${response.data.products[i].price}</td>`;
+	      buttonTableColumn = `<td><button id=\"${response.data.products[i].product_id}\" onclick=\"purchaseProduct(this.id);\">Purchase Product</button></td>`; 
 	      
-	      $("#books").append(
+	      $("#christmasstore").append(
 		      "<tr>" +
-		      authorTableColumn +
-		      titleTableColumn +
+		      companyTableColumn +
+		      productTableColumn +
 		      priceTableColumn +
 		      buttonTableColumn +
 		      "</tr>"
@@ -186,11 +186,11 @@
 	  }
       }
 
-      async function purchaseBook(id) {
-	  response = await $.post("/secure_api/purchase_books", 
+      async function purchaseProduct(id) {
+	  response = await $.post("/secure_api/purchase_products", 
 				  {
 				      "jwt": token.jwt, 
-				      "book_id": id
+				      "product_id": id
 				  }, "json");
 	  alert(response.data.message);
       }
