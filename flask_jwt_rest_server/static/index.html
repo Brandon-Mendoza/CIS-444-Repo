@@ -1,38 +1,98 @@
 <!DOCTYPE html>
 
-
 <html>
   <head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <script
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
     </script>
-  </head>
-  
-  
-  <body>
-	
 
+    <style>
+      table, th, td {
+	  padding: 15px;
+	  text-align: center;
+	  background-color: #04AA6D;
+	  border: 1px solid white;
+	  color: white;
+	  font-family: Courier New
+      }
+      
+      
+      body {
+	  background-image: url('https://images.alphacoders.com/930/930355.jpg');
+      }
+  
+
+      #login {
+	  margin-left: auto;
+	  margin-right: auto;
+	  margin-top: 300px;
+	  position: relative;
+	  z-index: 1;
+	  background: #FFFFFF;
+	  max-width: 360px;
+	  padding; 45px;
+	  text-align: center;
+	  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+	  border-radius: 10px;
+      }
+
+      #createAccount {
+	  margin-left: auto;
+	  margin-right: auto;
+          margin-top: 300px;
+	  position: relative;
+          z-index: 1;
+          background: #FFFFFF;
+          max-width: 360px;
+          padding; 45px;
+          text-align: center;
+          box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+	  border-radius: 10px;
+      }
+											
+
+    </style>
+  
+  </head>
+    
+  <body>
+ 
     <div id = "login">
 	            
-      <h2>User Login</h2>
+      <h2 style="font-family:Courier New;">User Login</h2>
 		    
       <input type="text" id='username' name='username' placeholder="Username"/>
       <br>
       <input type="password" id='password' name="password" placeholder="Password"/>
       <br>
+      <!--<button class="login"><i class="fas fa-gifts"></i> Login</button>-->
       <input type="button" id="login" value="Login" onclick="login();"/>
-      
+      <!--<input type="button" id="createAccount" value="Create Account" onclick="createAccount()">-->
+      <p style="font-family:Courier New;">Dont have an account?<a id="signin-link" href="#" onclick="switchToCreateAccount(); return false;">Create an account</a></p>
       
     </div>
-	    
 
-    <div id="bookList">
-      <h1>BookMart!</h1>
+     <div id = "createAccount">
+                   
+       <h2 style="font-family:Courier New;">Create Account</h2>
+	     
+       <input type="text" id='createUserName' name='username' placeholder="Username"/>
+       <br>
+       <input type="password" id='createPassword' name="password" placeholder="Password"/>
+       <br>
+       <!--<input type="button" id="login" value="Login" onclick="login();"/>-->
+       <input type="button" id="createAccount" value="Create Account" onclick="createAccount()">
+       <p style="font-family:Courier New;">Go back to User Login<a id="signin-link" href="#" onclick="switchToLogin(); return false;">Login</a></p>	         
+     </div>
+
+    <div id="storeList">
+      <h1 style="font-family:Courier New; color:white;">Welcome to the Christmas Store! :D</h1>
       <table>
 	<thead>
 	  <tr>
-	    <th>Author</th>
-	    <th>Title</th>
+	    <th>Product ID</th>
+	    <th>Product</th>
 	    <th>Price</th>
 	    <th></th>
 	  </tr>
@@ -50,9 +110,20 @@
       let response;
 			    
 
-      $("#bookList").hide();
-			    
+      $("#storeList").hide();
+      $("#createAccount").hide();
 
+
+      function switchToCreateAccount() {
+	  $("#login").hide();
+	  $("#createAccount").show();
+      }
+
+      function switchToLogin() {
+          $("#createAccount").hide();
+          $("#login").show();
+      }
+      
       async function login() {
 	  response = await $.post("/open_api/login",
 				  {
@@ -67,10 +138,28 @@
 			    
 
 	      $("#login").hide();
-	      $("#bookList").show();
+	      $("#storeList").show();
 	  } else alert(response.data.message);
       }
-			    
+
+      async function createAccount() {
+	  response = await $.post("/open_api/createAccount",
+				  {
+				      "username": $("#createUserName").val(),
+				      "password": $("#createPassword").val()
+				  }, "json");
+	      
+	  
+
+	  if(response.status == 200) {
+	      token = await response.data;
+	      getBooks();
+
+	      $("#createAccount").hide();
+	      $("#storeList").show();
+	  } else alert(response.data.message);
+      }
+
 
       async function getBooks() {
 	  const response = await $.post("/secure_api/get_books",
@@ -84,7 +173,7 @@
 	      authorTableColumn = `<td>${response.data.books[i].author}</td>`;
 	      titleTableColumn = `<td>${response.data.books[i].title}</td>`;
 	      priceTableColumn = `<td>$${response.data.books[i].price}</td>`;
-	      buttonTableColumn = `<td><button id=\"${response.data.books[i].book_id}\" onclick=\"purchaseBook(this.id);\">Purchase Book</button></td>`; 
+	      buttonTableColumn = `<td><button id=\"${response.data.books[i].book_id}\" onclick=\"purchaseBook(this.id);\">Purchase Item</button></td>`; 
 	      
 	      $("#books").append(
 		      "<tr>" +
@@ -109,13 +198,14 @@
       </script>
 		    
     
-    
+    <!--
     <style>
       body {
-	  background-image: url('https://wallpaperaccess.com/full/1715619.jpg');
+	  background-image: url('https://lakesregionpartygift.com/wp-content/uploads/2018/02/snow-clipart-animated-gifs-14.gif');
 	  background-attachment: fixed;
       }
     </style>
+    -->
     
   </body>
   
